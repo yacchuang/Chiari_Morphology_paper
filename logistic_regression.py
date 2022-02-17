@@ -9,10 +9,11 @@ Created on Fri Feb  4 17:01:45 2022
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, LinearRegression
 # from sklearn import svm
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from scipy.special import expit
 # import seaborn as sns
 
 ### Load data
@@ -45,6 +46,16 @@ plt.scatter(X,y)
 plt.plot(X,LogR.predict_proba(X)[:,1], color='red')
 plt.xlabel("4thVentricle (mm^3)")
 plt.ylabel("Probability of Headache")
+
+### loss function
+loss = expit(X * LogR.coef_ + LogR.intercept_).ravel()
+plt.plot(X, loss, color="blue", linewidth=3)
+
+# Linear regression 
+ols = LinearRegression()
+ols.fit(X, y)
+plt.plot(X, ols.coef_ * X + ols.intercept_, linewidth=1)
+plt.axhline(0.5, color=".5")
 
 
 ### Evaluate the model

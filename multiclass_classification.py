@@ -25,30 +25,33 @@ df.head(2)
 df.loc[df["headache"]=="N", "headache"]=0
 df.loc[df["headache"]=="Y", "headache"]=1
 df.loc[df["back_neck_ear_pain"]=="N", "back_neck_ear_pain"]=0
-df.loc[df["back_neck_ear_pain"]=="Y", "back_neck_ear_pain"]=1
+df.loc[df["back_neck_ear_pain"]=="Y", "back_neck_ear_pain"]=2
 df.loc[df["nausea_vomit"]=="N", "nausea_vomit"]=0
-df.loc[df["nausea_vomit"]=="Y", "nausea_vomit"]=1
+df.loc[df["nausea_vomit"]=="Y", "nausea_vomit"]=3
 print(df)
 
 # Set X (1 morphometric result) and Y (multiple symptoms)
-X = df['4thVentricle']
-X = df["4thVentricle"].values.reshape(-1,1)
-Y1 = df['headache']
-Y2 = df['back_neck_ear_pain']
-Y3 = df['nausea_vomit']
-Y = [Y1, Y2, Y3]
+x = df['4thVentricle']
+x = df["4thVentricle"].values.reshape(-1,1)
+y1 = df['headache']
+y2 = df['back_neck_ear_pain']
+y3 = df['nausea_vomit']
+Y = [y1, y2, y3]
+X = [x, x, x]
 
 # Set X scaler
 sc = StandardScaler()
-X = sc.fit_transform(X)
+x = sc.fit_transform(x)
 
+### Model Selection
 # Multi-class Classification 
-lm = linear_model.LogisticRegression(multi_class='ovr', solver='liblinear')
+lm = linear_model.LogisticRegression(multi_class='multinomial')
 lm.fit(X, Y)
 
+
 # Scatter plot
-plt.scatter(X, Y1, color = "r")
-plt.scatter(X, Y2, color = "b")
-plt.scatter(X, Y3, color = "g")
+plt.scatter(x, y1, color = "r")
+plt.scatter(x, y2, color = "b")
+plt.scatter(x, y3, color = "g")
 plt.plot(X,lm.predict_proba(X)[:,1], color='red')
 
