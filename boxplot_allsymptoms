@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Feb 16 18:05:51 2022
+
+@author: ya-chenchuang
+"""
+
+import pandas as pd
+import numpy as np
+
+
+### load data
+df =  pd.read_excel("/Users/ya-chenchuang/Desktop/Stevens/projects/Morphology/results/symptoms_correlation.xlsx", sheet_name='allsymptoms_volumetric', index_col=None, header=None);
+print(df.shape) 
+print("Column headings:")
+print(df.columns)
+df.head(0)
+
+### classify symptoms data
+# if symptom == Y read morphometric data
+# if symptom == N skip the data
+
+# for column in df[2:16]:
+#     for i in df.nrows[1:63]:
+#         if i == 'Y':
+            
+# read morphometric data
+# make a new sheet to copy the data 
+    
+
+### make boxplot 
+
+'''
+df = pd.DataFrame(np.random.randn(10, 4),
+                  columns=['Col1', 'Col2', 'Col3', 'Col4'])
+boxplot = df.boxplot(column=['Col1', 'Col2', 'Col3'])  
+'''
