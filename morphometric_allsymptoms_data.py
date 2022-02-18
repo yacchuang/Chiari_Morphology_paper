@@ -25,7 +25,7 @@ print(df.columns)
 wb = Workbook()
 
 # add_sheet is used to create sheet.
-sheet1 = wb.add_sheet('TonsilVolume')
+sheet1 = wb.add_sheet('4thVentricleVolume')
 
 col = 0
 for symptoms in range(2,17):
@@ -49,17 +49,19 @@ col = 0
 for column in range(2,17):
     for i in df.loc[:, column]:
         if i == 1:
-            sheet1.write(row, col, df.iloc[row, 19])
+            sheet1.write(row, col, df.iloc[row, 22])
             # print(df.iloc[row, 19])
         row = row + 1
     row = 0
     col = col + 1
 
 # write the data in a new excel sheet 
-wb.save('/Users/ya-chenchuang/Desktop/Stevens/projects/Morphology/results/symptoms.xls')
+wb.save('/Users/ya-chenchuang/Desktop/Stevens/projects/Morphology/results/symptoms_4thVentricle.xls')
 
 ### make boxplot 
-SymptomData = pd.read_excel('/Users/ya-chenchuang/Desktop/Stevens/projects/Morphology/results/symptoms.xls', sheet_name='TonsilVolume')
+SymptomData = pd.read_excel('/Users/ya-chenchuang/Desktop/Stevens/projects/Morphology/results/symptoms_4thVentricle.xls', sheet_name='4thVentricleVolume')
 
 Tonsilboxplot = SymptomData.boxplot()  
+
+
 
