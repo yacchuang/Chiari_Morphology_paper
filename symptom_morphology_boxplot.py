@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 
 
-SymptomData = pd.read_excel('/Users/ya-chenchuang/Desktop/Stevens/projects/Morphology/results/symptoms_Clivo-occipital.xls', sheet_name='Clivo-occipital')
+SymptomData = pd.read_excel('/Users/kurtlab/Desktop/Chiari Morphometric/results/symptoms_morph/symptoms_BSv.xls', sheet_name='BSv')
 
 Tonsilboxplot = SymptomData.boxplot(fontsize=None, rot=90)
-Tonsilboxplot.set_ylabel("Clivo-occipital angle", fontsize = 14) 
+Tonsilboxplot.set_ylabel("Brainstem volume (mm^3)", fontsize = 14) 

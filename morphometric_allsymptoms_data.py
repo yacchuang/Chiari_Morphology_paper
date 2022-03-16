@@ -16,7 +16,7 @@ from xlwt import Workbook
 
 
 ### load data
-df =  pd.read_excel("/Users/ya-chenchuang/Desktop/Stevens/projects/Morphology/results/symptoms_correlation.xlsx", sheet_name='allsymptoms_2D', header = None, index_col = None);
+df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari Morphometric/results/symptoms_morph/symptoms_correlation.xlsx", sheet_name='symptoms_new', header = None, index_col = None);
 print(df.shape) 
 print("Column headings:")
 print(df.columns)
@@ -25,7 +25,7 @@ print(df.columns)
 wb = Workbook()
 
 # add_sheet is used to create sheet.
-sheet1 = wb.add_sheet('Clivo-occipital')
+sheet1 = wb.add_sheet('FMaRatio')
 
 col = 0
 for symptoms in range(2,17):
@@ -36,7 +36,7 @@ for symptoms in range(2,17):
 ### classify symptoms data
 # read morphometric data:
 # set Y = 1; N = 0
-for column in df[2:16]:
+for column in df[2:17]:
     df.loc[df[column]=="N", column]=0
     df.loc[df[column]=="Y", column]=1
     
@@ -49,18 +49,18 @@ col = 0
 for column in range(2,17):
     for i in df.loc[:, column]:
         if i == 1:
-            sheet1.write(row, col, df.iloc[row, 21])
+            sheet1.write(row, col, df.iloc[row, 25])
             # print(df.iloc[row, 19])
         row = row + 1
     row = 0
     col = col + 1
 
 # write the data in a new excel sheet 
-wb.save('/Users/ya-chenchuang/Desktop/Stevens/projects/Morphology/results/symptoms_Clivo-occipital.xls')
+wb.save('/Users/kurtlab/Desktop/Chiari Morphometric/results/symptoms_morph/symptoms_FMaRatio.xls')
 
 '''
 ### make boxplot 
-SymptomData = pd.read_excel('/Users/ya-chenchuang/Desktop/Stevens/projects/Morphology/results/symptoms_4thVentricle.xls', sheet_name='4thVentricleVolume')
+SymptomData = pd.read_excel('/Users/ya-chenchuang/Desktop/Stevens/projects/Morphology/results/symptoms_morph/symptoms_4thVentricle.xls', sheet_name='4thVentricleVolume')
 Tonsilboxplot = SymptomData.boxplot()  
 '''
 
