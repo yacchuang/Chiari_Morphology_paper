@@ -10,34 +10,42 @@ import seaborn as sns
 from scipy import stats
 import numpy as np
 from scipy.stats import mannwhitneyu, normaltest
+from xlwt import Workbook
+
 
 
 
 df = pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symptoms_correlation_YN.xlsx", sheet_name='symptoms_new3D', index_col = None);
 
+### Create new worksheet
+wb = Workbook()
 
+# add_sheet is used to create sheet.
+sheet1 = wb.add_sheet('CBLv')
 
-## statistics
-yes = df.loc[(df.headache == "Y"), "CBLv"].values
-no = df.loc[(df.headache == "N"), "CBLv"].values
+# BackpainYes = df.loc[(df.back_neck_ear_pain == "Y"), "CBLv"].values
+# BackpainNo = df.loc[(df.back_neck_ear_pain == "N"), "CBLv"].values
 
-# yes = df.loc[(df.sensory_changes == "Y"), "CBLv"].values
-# no = df.loc[(df.sensory_changes == "N"), "CBLv"].values
+SensoryYes = df.loc[(df.sensory_changes == "Y"), "CBLv"].values
+SensoryNo = df.loc[(df.sensory_changes == "N"), "CBLv"].values
 
 # yes = df.loc[(df.nausea_vomit == "Y"), "CBLv"].values
 # no = df.loc[(df.nausea_vomit == "N"), "CBLv"].values
 
-# yes = df.loc[(df.gait_imbalance == "Y"), "CBLv"].values
-# no = df.loc[(df.gait_imbalance == "N"), "CBLv"].values
+GaitYes = df.loc[(df.gait_imbalance == "Y"), "CBLv"].values
+GaitNo = df.loc[(df.gait_imbalance == "N"), "CBLv"].values
 
-# yes = df.loc[(df.numbness == "Y"), "CBLv"].values
-# no = df.loc[(df.numbness == "N"), "CBLv"].values
+NumbnessYes = df.loc[(df.numbness == "Y"), "CBLv"].values
+NumbnessNo = df.loc[(df.numbness == "N"), "CBLv"].values
 
-# yes = df.loc[(df.dizziness == "Y"), "CBLv"].values
-# no = df.loc[(df.dizziness == "N"), "CBLv"].values
+# DizzinessYes = df.loc[(df.dizziness == "Y"), "CBLv"].values
+# DizzinessNo = df.loc[(df.dizziness == "N"), "CBLv"].values
 
-# yes = df.loc[(df.spasm_hyperreflecxic_jerking_movement == "Y"), "CBLv"].values
-# no = df.loc[(df.spasm_hyperreflecxic_jerking_movement == "N"), "CBLv"].values
+WeaknessYes = df.loc[(df.weakness == "Y"), "CBLv"].values
+WeaknessNo = df.loc[(df.weakness == "N"), "CBLv"].values
+
+SpasmYes = df.loc[(df.spasm_hyperreflecxic_jerking_movement == "Y"), "CBLv"].values
+SpasmNo = df.loc[(df.spasm_hyperreflecxic_jerking_movement == "N"), "CBLv"].values
 
 # yes = df.loc[(df.tinnitus_vertigo == "Y"), "CBLv"].values
 # no = df.loc[(df.tinnitus_vertigo == "N"), "CBLv"].values
@@ -48,7 +56,11 @@ no = df.loc[(df.headache == "N"), "CBLv"].values
 # yes = df.loc[(df.urinary_bowel == "Y"), "CBLv"].values
 # no = df.loc[(df.urinary_bowel == "N"), "CBLv"].values
 
+# write the data in a new excel sheet 
+sheet1.write("SensoryYes", "SensoryNo")
+wb.save('/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/severe_CBLv.xls')
 
+## statistics
 log_yes = np.log(yes)
 log_no = np.log(no)
 

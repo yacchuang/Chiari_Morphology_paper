@@ -25,7 +25,8 @@ print(df.columns)
 wb = Workbook()
 
 # add_sheet is used to create sheet.
-sheet1 = wb.add_sheet('FMaRatio')
+sheet1 = wb.add_sheet('Yes')
+sheet2 = wb.add_sheet('No')
 
 col = 0
 for symptoms in range(2,18):
@@ -50,13 +51,15 @@ for column in range(2,17):
     for i in df.loc[:, column]:
         if i == 1:
             sheet1.write(row, col, df.iloc[row, 24])
+        if i == 0:
+            sheet2.write(row, col, df.iloc[row, 24])
             # print(df.iloc[row, 19])
         row = row + 1
     row = 0
     col = col + 1
 
 # write the data in a new excel sheet 
-wb.save('/Users/kurtlab/Desktop/Chiari_Morphometric/results/symp_FMaRatio.xls')
+wb.save('/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symp_YN_FMaRatio.xls')
 
 '''
 ### make boxplot 
