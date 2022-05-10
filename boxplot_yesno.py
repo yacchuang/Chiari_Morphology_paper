@@ -61,7 +61,7 @@ print("Yes vs No: \n", stat_results, "\n")
 boxplot = sns.boxplot(x="headache", y="CBLv", data=df);
 # boxplot = sns.boxplot(x="condition", y="4thVentricle", data=pd.melt(df), order=["Y", "N"])
 # boxplot = sns.stripplot(x="condition", y="4thVentricle", data=pd.melt(df), marker="o", alpha=0.3, color="black", order=["Y", "N"])
-boxplot.axes.set_title("sheadache vs CBLv", fontsize=16)
+boxplot.axes.set_title("headache vs CBLv", fontsize=16)
 boxplot.set_xlabel("headache", fontsize=14)
 boxplot.set_ylabel("CBLv", fontsize=14)
 
