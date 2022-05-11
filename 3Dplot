@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue May 10 19:50:59 2022
+
+@author: Ya-Chen Chuang
+"""
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+from mpl_toolkits.mplot3d import Axes3D
+
+df = pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/ChiariSymptoms_analysis.xlsx", sheet_name='syringomyelia_CM1');
+
+## extra each variable
+tonsil = pd.DataFrame(df["TonsilV"].values, index = None, columns = ["TonsilV"]); 
+CBLv = pd.DataFrame(df["CBLv"].values, index = None, columns = ["CBLv"]); 
+BSv = pd.DataFrame(df["BSv"].values, index = None, columns = ["BSv"]); 
+Ventricle = pd.DataFrame(df["4thV"].values, index = None, columns = ["4thV"]); 
+
+## categorize Syringomyelia
+No = df.loc[df["syringomyelia"]=="N", "syringomyelia"]=0
+Yes = df.loc[df["syringomyelia"]=="Y", "syringomyelia"]=1
+label = df["syringomyelia"]
+
+## Plot
+fig = plt.figure()
+
+ax = fig.add_subplot(111, projection='3d')
+
+ax.scatter(xs = tonsil, ys = CBLv, zs = Ventricle, c = label)
+
+ax.set_title("Syringomyelia")
+
+ax.set_xlabel("Tonsil (mm^3)")
+
+ax.set_ylabel("Cerebellum (mm^3)")
+
+ax.set_zlabel("4th Ventricle (mm^3)")
+
+plt.show()
