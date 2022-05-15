@@ -9,9 +9,16 @@ Created on Fri May 13 14:54:28 2022
 ## for data
 import numpy as np
 import pandas as pd
+
 ## for plotting
 import matplotlib.pyplot as plt
 import seaborn as sns
+# from mpl_toolkits.mplot3d import Axes3D
+# import plotly.graph_objs as go
+# from plotly import tools
+# from plotly.subplots import make_subplots
+# import plotly.offline as py
+
 # ## for geospatial
 # import folium
 # import geopy
@@ -22,11 +29,6 @@ import scipy
 from numpy import array
 from scipy.cluster.vq import vq
 
-from mpl_toolkits.mplot3d import Axes3D
-import plotly.graph_objs as go
-from plotly import tools
-from plotly.subplots import make_subplots
-import plotly.offline as py
 
 # ## for deep learning
 # import minisom
@@ -40,7 +42,7 @@ Yes = df.loc[df["syringomyelia"]=="Y", "syringomyelia"]=1
 # label = df["syringomyelia"]
 
 
-dtf = df[["syringomyelia","TonsilL","(CMa+Ta)/FMa","4thV"]].reset_index(drop=True)
+dtf = df[["syringomyelia","TonsilV","CBLv","4thV"]].reset_index(drop=True)
 dtf = dtf.reset_index().rename(columns={"index":"id"})
 dtf.head()
 label = dtf["syringomyelia"]
@@ -48,18 +50,20 @@ label = dtf["syringomyelia"]
 ## K-mean clustering
 k = 1
 model = cluster.KMeans(n_clusters=k, init='k-means++')
-Syrinx = dtf[dtf["syringomyelia"]==1][["TonsilL","(CMa+Ta)/FMa","4thV"]]
-NoSyrinx = dtf[dtf["syringomyelia"]==0][["TonsilL","(CMa+Ta)/FMa","4thV"]]
+Syrinx = dtf[dtf["syringomyelia"]==1][["TonsilV","CBLv","4thV"]]
+SyrinxUsed = Syrinx.dropna()
+NoSyrinx = dtf[dtf["syringomyelia"]==0][["TonsilV","CBLv","4thV"]]
+NoSyrinxUsed = NoSyrinx.dropna()
 # SyrinxData = pd.DataFrame(Syrinx["BSv","CBLv","4thV"].values, columns = ["BSv","CBLv","4thV"]);
 
 
 ## clustering
-dtf_syrinx = Syrinx.copy()
-dtf_syrinx["cluster"] = model.fit_predict(Syrinx)
-SortedClusters = np.sort(model.cluster_centers_, axis=0)
+dtf_syrinx = SyrinxUsed.copy()
+dtf_syrinx["cluster"] = model.fit_predict(SyrinxUsed)
+SyrinxClusters = np.sort(model.cluster_centers_, axis=0)
 
-dtf_nosyrinx = NoSyrinx.copy()
-dtf_nosyrinx["cluster"] = model.fit_predict(NoSyrinx)
+dtf_nosyrinx = NoSyrinxUsed.copy()
+dtf_nosyrinx["cluster"] = model.fit_predict(NoSyrinxUsed)
 NoSyrinxClusters = np.sort(model.cluster_centers_, axis=0)
 
 ## find real centroids
@@ -78,8 +82,8 @@ dtf.sample(1)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection = '3d')
 
-xs = dtf["TonsilL"];
-ys = dtf["(CMa+Ta)/FMa"];
+xs = dtf["TonsilV"];
+ys = dtf["CBLv"];
 zs = dtf["4thV"];
 
 ax.scatter(xs, ys, zs, c = label)
@@ -87,14 +91,17 @@ ax.scatter(xs, ys, zs, c = label)
 # ax.scatter(xs, ys, zs, data=dtf, palette=sns.color_palette("bright",k),hue='cluster', legend="brief", ax=ax).set_title('Clustering (k='+str(k)+')')
 
 ## plot the centroid
-th_centroids = model.cluster_centers_
-ax.scatter(th_centroids[:,0], th_centroids[:,1], th_centroids[:,2], s=50, c='black', marker="x")
+# th_centroids = model.cluster_centers_
+# ax.scatter(th_centroids[:,0], th_centroids[:,1], th_centroids[:,2], s=50, c='black', marker="x")
+Syrinx_centroid = SyrinxClusters
+ax.scatter(Syrinx_centroid [:,0], Syrinx_centroid [:,1], Syrinx_centroid [:,2], s=50, c='red', marker="x")
+ax.scatter(NoSyrinxClusters [:,0], NoSyrinxClusters [:,1], NoSyrinxClusters [:,2], s=50, c='blue', marker="x")
 
 ax.set_title("Syringomyelia")
 
-ax.set_xlabel("Tonsil length (mm)")
+ax.set_xlabel("Tonsil volume (mm^3)")
 
-ax.set_ylabel("(CMa+Ta)/FMa (%)")
+ax.set_ylabel("Cerebellum volume (mm^3)")
 
 ax.set_zlabel("4th Ventricle (mm^3)")
 
