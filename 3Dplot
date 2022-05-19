@@ -20,12 +20,12 @@ from mpl_toolkits.mplot3d import Axes3D
 df = pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
 
 ## extra each variable
-tonsil = pd.DataFrame(df["TonsilV"].values, index = None, columns = ["TonsilV"]); 
-CBLv = pd.DataFrame(df["CBLv"].values, index = None, columns = ["CBLv"]); 
+# tonsil = pd.DataFrame(df["TonsilV"].values, index = None, columns = ["TonsilV"]); 
+# CBLv = pd.DataFrame(df["CBLv"].values, index = None, columns = ["CBLv"]); 
 # BSv = pd.DataFrame(df["BSv"].values, index = None, columns = ["BSv"]); 
 Ventricle = pd.DataFrame(df["4thV"].values, index = None, columns = ["4thV"]); 
-# tonsilL = pd.DataFrame(df["TonsilL"].values, index = None, columns = ["TonsilL"]);
-# FMa = pd.DataFrame(df["FMaRatio"].values, index = None, columns = ["FMaRatio"]);
+tonsilL = pd.DataFrame(df["TonsilL"].values, index = None, columns = ["TonsilL"]);
+FMa = pd.DataFrame(df["FMaRatio"].values, index = None, columns = ["FMaRatio"]);
 # Clivo_occipital = pd.DataFrame(df["Clivo_occipital"].values, index = None, columns = ["Clivo_ccipital"]);
 # Boogard_Angle = pd.DataFrame(df["Boogard"].values, index = None, columns = ["Boogard"]);
 # Occipital_angle = pd.DataFrame(df["Occipital"].values, index = None, columns = ["Occipital"]);
@@ -39,12 +39,12 @@ label = df["condition"]
 ## Model generation and fitting
 # Chiari
 ChiariData = pd.DataFrame()
-ChiariData['tonsil'] = pd.DataFrame(df[df["condition"]==0]['TonsilV'])
-ChiariData['CBLv'] = pd.DataFrame(df[df["condition"]==0]['CBLv'])
+ChiariData['tonsilL'] = pd.DataFrame(df[df["condition"]==0]['TonsilL'])
+ChiariData['FMaRatio'] = pd.DataFrame(df[df["condition"]==0]['FMaRatio'])
 ChiariData['Ventricle'] = pd.DataFrame(df[df["condition"]==0]['4thV'])
 ChiariDataUsed = ChiariData.dropna()
 
-X_multi = ChiariDataUsed[["tonsil", "CBLv"]]
+X_multi = ChiariDataUsed[["tonsilL", "FMaRatio"]]
 Y_target = ChiariDataUsed["Ventricle"]
 
 lreg = LinearRegression()
@@ -54,12 +54,12 @@ b1 = lreg.intercept_ #Intercept
 
 # Chiari
 HealthyData = pd.DataFrame()
-HealthyData['tonsil'] = pd.DataFrame(df[df["condition"]==1]['TonsilV'])
-HealthyData['CBLv'] = pd.DataFrame(df[df["condition"]==1]['CBLv'])
+HealthyData['tonsilL'] = pd.DataFrame(df[df["condition"]==1]['TonsilL'])
+HealthyData['FMaRatio'] = pd.DataFrame(df[df["condition"]==1]['FMaRatio'])
 HealthyData['Ventricle'] = pd.DataFrame(df[df["condition"]==1]['4thV'])
 HealthyDataUsed = HealthyData.dropna()
 
-X_multi_H = HealthyDataUsed[["tonsil", "CBLv"]]
+X_multi_H = HealthyDataUsed[["tonsilL", "FMaRatio"]]
 Y_target_H = HealthyDataUsed["Ventricle"]
 
 lreg_H = LinearRegression()
@@ -74,24 +74,24 @@ fig = plt.figure()
 
 ax = fig.add_subplot(111, projection='3d')
 
-scat_plot = ax.scatter(xs = tonsil, ys = CBLv, zs = Ventricle, c = label)
+scat_plot = ax.scatter(xs = tonsilL, ys = FMa, zs = Ventricle, c = label)
 
 ## 3D drawing (drawing of regression plane)
 # Chiari
-X1, Y1 = np.meshgrid(np.arange(5000, 18000, 100), np.arange(100000, 200000, 100))
+X1, Y1 = np.meshgrid(np.arange(0, 25, 1), np.arange(0, 1, 0.01))
 Z1 = a1 * X1 + a2 * Y1 + b1
 ax.plot_surface(X1, Y1, Z1, alpha = 0.5) #Specify transparency with alpha
 
 # Healthy
-X2, Y2 = np.meshgrid(np.arange(5000, 18000, 100), np.arange(100000, 200000, 100))
+X2, Y2 = np.meshgrid(np.arange(0, 5, 1), np.arange(0, 1, 0.01))
 Z2 = a3 * X2 + a4 * Y2 + b2
 ax.plot_surface(X2, Y2, Z2, alpha = 0.5) #Specify transparency with alpha
 
 ax.set_title("volumetric correlation")
 
-ax.set_xlabel("Tonsil volume (mm^3)")
+ax.set_xlabel("Tonsil length (mm)")
 
-ax.set_ylabel("Cerebellum volume (mm^3)")
+ax.set_ylabel("(CMa+Ta)/FMa (%)")
 
 ax.set_zlabel("4th ventricle volume (mm^3)")
 
