@@ -5,44 +5,100 @@ Created on Tue May 10 19:50:59 2022
 
 @author: Ya-Chen Chuang
 """
+# to interacte  with plot
+# %matplotlib widget
+# import ipywidgets as widgets
 
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.datasets import load_boston
+from sklearn.linear_model import LinearRegression
 import pandas as pd
 from mpl_toolkits.mplot3d import Axes3D
 
-df = pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/ChiariSymptoms_analysis.xlsx", sheet_name='syringomyelia_CM1');
+df = pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
 
 ## extra each variable
 tonsil = pd.DataFrame(df["TonsilV"].values, index = None, columns = ["TonsilV"]); 
 CBLv = pd.DataFrame(df["CBLv"].values, index = None, columns = ["CBLv"]); 
-BSv = pd.DataFrame(df["BSv"].values, index = None, columns = ["BSv"]); 
+# BSv = pd.DataFrame(df["BSv"].values, index = None, columns = ["BSv"]); 
 Ventricle = pd.DataFrame(df["4thV"].values, index = None, columns = ["4thV"]); 
-tonsilL = pd.DataFrame(df["TonsilL"].values, index = None, columns = ["TonsilL"]);
-FMa = pd.DataFrame(df["(CMa+Ta)/FMa"].values, index = None, columns = ["(CMa+Ta)/FMa"]);
-Clivo_occipital = pd.DataFrame(df["Clivo-occipital"].values, index = None, columns = ["Clivo-occipital"]);
-Boogard_Angle = pd.DataFrame(df["Boogard_Angle"].values, index = None, columns = ["Boogard_Angle"]);
-Occipital_angle = pd.DataFrame(df["Occipital_angle"].values, index = None, columns = ["Occipital_angle"]);
-Clivus_canal = pd.DataFrame(df["Clivus_canal"].values, index = None, columns = ["Clivus_canal"]);
+# tonsilL = pd.DataFrame(df["TonsilL"].values, index = None, columns = ["TonsilL"]);
+# FMa = pd.DataFrame(df["FMaRatio"].values, index = None, columns = ["FMaRatio"]);
+# Clivo_occipital = pd.DataFrame(df["Clivo_occipital"].values, index = None, columns = ["Clivo_ccipital"]);
+# Boogard_Angle = pd.DataFrame(df["Boogard"].values, index = None, columns = ["Boogard"]);
+# Occipital_angle = pd.DataFrame(df["Occipital"].values, index = None, columns = ["Occipital"]);
+# Clivus_canal = pd.DataFrame(df["Clivus_canal"].values, index = None, columns = ["Clivus_canal"]);
 
 ## categorize Syringomyelia
-No = df.loc[df["syringomyelia"]=="N", "syringomyelia"]=0
-Yes = df.loc[df["syringomyelia"]=="Y", "syringomyelia"]=1
-label = df["syringomyelia"]
+Chiari = df.loc[df["condition"]=="Chiari", "condition"]=0
+Healthy = df.loc[df["condition"]=="Healthy", "condition"]=1
+label = df["condition"]
+
+## Model generation and fitting
+# Chiari
+ChiariData = pd.DataFrame()
+ChiariData['tonsil'] = pd.DataFrame(df[df["condition"]==0]['TonsilV'])
+ChiariData['CBLv'] = pd.DataFrame(df[df["condition"]==0]['CBLv'])
+ChiariData['Ventricle'] = pd.DataFrame(df[df["condition"]==0]['4thV'])
+ChiariDataUsed = ChiariData.dropna()
+
+X_multi = ChiariDataUsed[["tonsil", "CBLv"]]
+Y_target = ChiariDataUsed["Ventricle"]
+
+lreg = LinearRegression()
+lreg.fit(X_multi, Y_target)
+a1, a2 = lreg.coef_ #coefficient
+b1 = lreg.intercept_ #Intercept
+
+# Chiari
+HealthyData = pd.DataFrame()
+HealthyData['tonsil'] = pd.DataFrame(df[df["condition"]==1]['TonsilV'])
+HealthyData['CBLv'] = pd.DataFrame(df[df["condition"]==1]['CBLv'])
+HealthyData['Ventricle'] = pd.DataFrame(df[df["condition"]==1]['4thV'])
+HealthyDataUsed = HealthyData.dropna()
+
+X_multi_H = HealthyDataUsed[["tonsil", "CBLv"]]
+Y_target_H = HealthyDataUsed["Ventricle"]
+
+lreg_H = LinearRegression()
+lreg_H.fit(X_multi_H, Y_target_H)
+a3, a4 = lreg_H.coef_ #coefficient
+b2 = lreg_H.intercept_ #Intercept
 
 ## Plot
+#3D drawing (drawing of measured values)
 fig = plt.figure()
+# ax = Axes3D(fig)
 
 ax = fig.add_subplot(111, projection='3d')
 
-ax.scatter(xs = tonsil, ys = CBLv, zs = Ventricle, c = label)
+scat_plot = ax.scatter(xs = tonsil, ys = CBLv, zs = Ventricle, c = label)
 
-ax.set_title("Syringomyelia")
+## 3D drawing (drawing of regression plane)
+# Chiari
+X1, Y1 = np.meshgrid(np.arange(5000, 18000, 100), np.arange(100000, 200000, 100))
+Z1 = a1 * X1 + a2 * Y1 + b1
+ax.plot_surface(X1, Y1, Z1, alpha = 0.5) #Specify transparency with alpha
 
-ax.set_xlabel("Tonsil (mm^3)")
+# Healthy
+X2, Y2 = np.meshgrid(np.arange(5000, 18000, 100), np.arange(100000, 200000, 100))
+Z2 = a3 * X2 + a4 * Y2 + b2
+ax.plot_surface(X2, Y2, Z2, alpha = 0.5) #Specify transparency with alpha
 
-ax.set_ylabel("Cerebellum (mm^3)")
+ax.set_title("volumetric correlation")
 
-ax.set_zlabel("4th Ventricle (mm^3)")
+ax.set_xlabel("Tonsil volume (mm^3)")
+
+ax.set_ylabel("Cerebellum volume (mm^3)")
+
+ax.set_zlabel("4th ventricle volume (mm^3)")
+
+cb = plt.colorbar(scat_plot, pad=0.2)
+
+cb.set_ticks([0,1])
+
+cb.set_ticklabels(["Chiari", "Healthy"])
 
 plt.show()
