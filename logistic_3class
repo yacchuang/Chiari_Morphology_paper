@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri May 20 10:57:41 2022
+
+@author: kurtlab
+"""
+
+
+
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+from sklearn.linear_model import LogisticRegression
+from sklearn import datasets
+from sklearn.inspection import DecisionBoundaryDisplay
+from scipy.sparse import issparse
+from mpl_toolkits.mplot3d import Axes3D
+# import statsmodels.api as sm
+
+
+df = pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
+
+## extra each variable
+# tonsil = pd.DataFrame(df["TonsilV"].values, index = None, columns = ["TonsilV"]); 
+# CBLv = pd.DataFrame(df["CBLv"].values, index = None, columns = ["CBLv"]); 
+# BSv = pd.DataFrame(df["BSv"].values, index = None, columns = ["BSv"]); 
+Ventricle = pd.DataFrame(df["4thV"].values, index = None, columns = ["4thV"]); 
+tonsilL = pd.DataFrame(df["TonsilL"].values, index = None, columns = ["TonsilL"]);
+FMa = pd.DataFrame(df["FMaRatio"].values, index = None, columns = ["FMaRatio"]);
+# Clivo_occipital = pd.DataFrame(df["Clivo_occipital"].values, index = None, columns = ["Clivo_ccipital"]);
+# Boogard_Angle = pd.DataFrame(df["Boogard"].values, index = None, columns = ["Boogard"]);
+# Occipital_angle = pd.DataFrame(df["Occipital"].values, index = None, columns = ["Occipital"]);
+# Clivus_canal = pd.DataFrame(df["Clivus_canal"].values, index = None, columns = ["Clivus_canal"]);
+
+df = df.dropna()
+
+## categorize Syringomyelia
+Chiari = df.loc[df["condition"]=="Chiari", "condition"]=0
+Healthy = df.loc[df["condition"]=="Healthy", "condition"]=1
+label = df["condition"]
+
+# ## Model generation and fitting
+# # Chiari
+# ChiariData = pd.DataFrame()
+# ChiariData['tonsilL'] = pd.DataFrame(df[df["condition"]==0]['TonsilL'])
+# ChiariData['FMaRatio'] = pd.DataFrame(df[df["condition"]==0]['FMaRatio'])
+# ChiariData['Ventricle'] = pd.DataFrame(df[df["condition"]==0]['4thV'])
+# ChiariDataUsed = ChiariData.dropna()
+
+# X_multi = ChiariDataUsed[["tonsilL", "FMaRatio"]]
+# Y_target = ChiariDataUsed["Ventricle"]
+
+
+# # Healthy
+# HealthyData = pd.DataFrame()
+# HealthyData['tonsilL'] = pd.DataFrame(df[df["condition"]==1]['TonsilL'])
+# HealthyData['FMaRatio'] = pd.DataFrame(df[df["condition"]==1]['FMaRatio'])
+# HealthyData['Ventricle'] = pd.DataFrame(df[df["condition"]==1]['4thV'])
+# HealthyDataUsed = HealthyData.dropna()
+
+# X_multi_H = HealthyDataUsed[["tonsilL", "FMaRatio"]]
+# Y_target_H = HealthyDataUsed["Ventricle"]
+
+
+# selected features to fit Healthy vs Chiari
+X = df[["TonsilL", "FMaRatio"]]  # we only take the first two features.
+Y = label
+
+# Create an instance of Logistic Regression Classifier and fit the data.
+logreg = LogisticRegression(C=1e5)
+logreg.fit(X,np.ravel(Y.astype(int)))
+# logreg.fit(X, Y)
+
+
+## Plot
+fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+
+
+_, ax = plt.subplots(figsize=(4, 3))
+DecisionBoundaryDisplay.from_estimator(
+    logreg,
+    X,
+    cmap=plt.cm.Paired,
+    ax=ax,
+    response_method="predict",
+    plot_method="pcolormesh",
+    shading="auto",
+    xlabel="tonsil",
+    ylabel="FMaRatio",
+    # zlabel="4th ventricle",
+    eps=0.5,
+)
+
+# Plot also the training points
+# scat_plot = ax.scatter(xs = tonsilL, ys = FMa, zs = Ventricle, c = label, edgecolors="k", cmap=plt.cm.Paired)
+plt.scatter(X['TonsilL'], X["FMaRatio"], c=Y, edgecolors="k", cmap=plt.cm.Paired)
+
+
+# plt.xticks(())
+# plt.yticks(())
+
+plt.show()
