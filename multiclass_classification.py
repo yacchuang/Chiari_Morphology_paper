@@ -21,17 +21,6 @@ df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms
 print(df.shape) 
 df.head(2)
 
-## extra each variable
-# tonsil = pd.DataFrame(df["TonsilV"].values, index = None, columns = ["TonsilV"]); 
-# CBLv = pd.DataFrame(df["CBLv"].values, index = None, columns = ["CBLv"]); 
-# BSv = pd.DataFrame(df["BSv"].values, index = None, columns = ["BSv"]); 
-# Ventricle = pd.DataFrame(df["4thV"].values, index = None, columns = ["4thV"]); 
-# tonsilL = pd.DataFrame(df["TonsilL"].values, index = None, columns = ["TonsilL"]);
-# FMa = pd.DataFrame(df["FMaRatio"].values, index = None, columns = ["FMaRatio"]);
-# Clivo_occipital = pd.DataFrame(df["Clivo_occipital"].values, index = None, columns = ["Clivo_ccipital"]);
-# Boogard_Angle = pd.DataFrame(df["Boogard"].values, index = None, columns = ["Boogard"]);
-# Occipital_angle = pd.DataFrame(df["Occipital"].values, index = None, columns = ["Occipital"]);
-# Clivus_canal = pd.DataFrame(df["Clivus_canal"].values, index = None, columns = ["Clivus_canal"]);
 
 df = df.dropna()
 X = df.iloc[:,3:6].values
