@@ -21,16 +21,22 @@ from scipy.sparse import issparse
 from mpl_toolkits.mplot3d import Axes3D
 # import statsmodels.api as sm
 
+## Load data
+# Symptoms data
+df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symptoms_morpho.xlsx", sheet_name='SevereSymptom');
+print(df.shape) 
+df.head(2)
 
-df = pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
+# Morpho data
+# df = pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
 
 ## extra each variable
 # tonsil = pd.DataFrame(df["TonsilV"].values, index = None, columns = ["TonsilV"]); 
 # CBLv = pd.DataFrame(df["CBLv"].values, index = None, columns = ["CBLv"]); 
 # BSv = pd.DataFrame(df["BSv"].values, index = None, columns = ["BSv"]); 
-Ventricle = pd.DataFrame(df["4thV"].values, index = None, columns = ["4thV"]); 
+# Ventricle = pd.DataFrame(df["4thV"].values, index = None, columns = ["4thV"]); 
 tonsilL = pd.DataFrame(df["TonsilL"].values, index = None, columns = ["TonsilL"]);
-FMa = pd.DataFrame(df["FMaRatio"].values, index = None, columns = ["FMaRatio"]);
+FMa = pd.DataFrame(df["(CMa+Ta)/FMa"].values, index = None, columns = ["(CMa+Ta)/FMa"]);
 # Clivo_occipital = pd.DataFrame(df["Clivo_occipital"].values, index = None, columns = ["Clivo_ccipital"]);
 # Boogard_Angle = pd.DataFrame(df["Boogard"].values, index = None, columns = ["Boogard"]);
 # Occipital_angle = pd.DataFrame(df["Occipital"].values, index = None, columns = ["Occipital"]);
@@ -38,10 +44,16 @@ FMa = pd.DataFrame(df["FMaRatio"].values, index = None, columns = ["FMaRatio"]);
 
 df = df.dropna()
 
-## categorize Syringomyelia
-Chiari = df.loc[df["condition"]=="Chiari", "condition"]=0
-Healthy = df.loc[df["condition"]=="Healthy", "condition"]=1
-label = df["condition"]
+## categorize Chiari
+# Chiari = df.loc[df["condition"]=="Chiari", "condition"]=0
+# Healthy = df.loc[df["condition"]=="Healthy", "condition"]=1
+# label = df["condition"]
+
+## label symptoms
+label = df["SevereSymptom"]
+from sklearn.preprocessing import LabelEncoder 
+ly = LabelEncoder()
+y = ly.fit_transform(label)
 
 # ## Model generation and fitting
 # # Chiari
@@ -67,8 +79,8 @@ label = df["condition"]
 
 
 # selected features to fit Healthy vs Chiari
-X = df[["TonsilL", "FMaRatio"]]  # we only take the first two features.
-Y = label
+X = df[["TonsilL", "(CMa+Ta)/FMa"]]  # we only take the first two features.
+Y = y
 
 # Create an instance of Logistic Regression Classifier and fit the data.
 logreg = LogisticRegression(C=1e5)
@@ -98,7 +110,7 @@ DecisionBoundaryDisplay.from_estimator(
 
 # Plot also the training points
 # scat_plot = ax.scatter(xs = tonsilL, ys = FMa, zs = Ventricle, c = label, edgecolors="k", cmap=plt.cm.Paired)
-plt.scatter(X['TonsilL'], X["FMaRatio"], c=Y, edgecolors="k", cmap=plt.cm.Paired)
+plt.scatter(X['TonsilL'], X["(CMa+Ta)/FMa"], c=Y, edgecolors="k", cmap=plt.cm.Paired)
 
 
 # plt.xticks(())
