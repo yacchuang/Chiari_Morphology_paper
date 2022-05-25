@@ -21,9 +21,17 @@ df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms
 print(df.shape) 
 df.head(2)
 
-
 df = df.dropna()
-X = df.iloc[:,3:6].values
+# X = df.iloc[:,3:6].values
+
+
+## Normalized Input
+# feature_names = ["TonsilL", "(CMa+Ta)/FMa", "4thVentricle", "TonsilV", "CBLv", "BSv"]
+feature_names = ["TonsilL", "(CMa+Ta)/FMa", "4thVentricle", "TonsilV"]
+for feature_name in feature_names:
+    df[feature_name] = df[feature_name] / df[feature_name].std()
+    
+X = df[feature_names].values
 
 
 ## label symptoms
@@ -35,9 +43,10 @@ ly = LabelEncoder()
 y = ly.fit_transform(label)
 
 
-# ## pairplot
+## pairplot
 # sns.set()
 # sns.pairplot(df[['TonsilV', 'CBLv', 'BSv', '4thV', 'TonsilL', 'FMaRatio']], hue="condition", diag_kind="kde")
+
 
 ## Splitting Data using Sklearn
 from sklearn.model_selection import train_test_split
@@ -56,6 +65,17 @@ p_pred1 = logreg.predict_proba(x_test)
 y_pred1 = logreg.predict(x_test)
 conf_m1 = confusion_matrix(y_test, y_pred)
 report1 = classification_report(y_test, y_pred)
+
+## Logistic Regression Prediction
+w0 = logreg.intercept_[0]
+w = w1, w2, w3, w4 = logreg.coef_[0]
+ 
+equation = "y = %f + (%f * x1) + (%f * x2) + (%f * x3) + (%f * x4)" % (w0, w1, w2, w3, w4)
+
+# w = w1, w2, w3 = logreg.coef_[0]
+ 
+# equation = "y = %f + (%f * x1) + (%f * x2) + (%f * x3)" % (w0, w1, w2, w3)
+print(equation)
 
 
 ## Support Vector Machine using Sklearn
