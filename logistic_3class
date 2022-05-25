@@ -30,7 +30,7 @@ df.head(2)
 # Morpho data
 # df = pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
 
-## extra each variable
+## extract each variable
 # tonsil = pd.DataFrame(df["TonsilV"].values, index = None, columns = ["TonsilV"]); 
 # CBLv = pd.DataFrame(df["CBLv"].values, index = None, columns = ["CBLv"]); 
 # BSv = pd.DataFrame(df["BSv"].values, index = None, columns = ["BSv"]); 
@@ -55,7 +55,7 @@ from sklearn.preprocessing import LabelEncoder
 ly = LabelEncoder()
 y = ly.fit_transform(label)
 
-# ## Model generation and fitting
+## Model generation and fitting
 # # Chiari
 # ChiariData = pd.DataFrame()
 # ChiariData['tonsilL'] = pd.DataFrame(df[df["condition"]==0]['TonsilL'])

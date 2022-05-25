@@ -42,7 +42,7 @@ y = ly.fit_transform(label)
 # X = df["4thVentricle"].values.reshape(-1,1)
 # y = df["headache"].values.reshape(-1,1)
 
-# Create an instance of the scaler and apply it to the data
+### Create an instance of the scaler and apply it to the data
 sc = StandardScaler()
 X = sc.fit_transform(X)
 
@@ -62,7 +62,7 @@ plt.ylabel("Probability of Severe Symptoms")
 loss = expit(X * LogR.coef_ + LogR.intercept_).ravel()
 plt.plot(X, loss, color="blue", linewidth=3)
 
-# Linear regression 
+### Linear regression 
 ols = LinearRegression()
 ols.fit(X, y)
 plt.plot(X, ols.coef_ * X + ols.intercept_, linewidth=1)
