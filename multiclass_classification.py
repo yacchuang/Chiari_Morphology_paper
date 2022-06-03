@@ -17,8 +17,8 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 from sklearn.preprocessing import StandardScaler
 
 ## Load data
-# df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symptoms_morpho.xlsx", sheet_name='SevereSymptom');
-df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
+df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symptoms_morpho.xlsx", sheet_name='SevereSymptom');
+# df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
 print(df.shape) 
 df.head(2)
 
@@ -28,7 +28,7 @@ df = df.dropna()
 
 ## Normalized Input
 # feature_names = ["TonsilL", "(CMa+Ta)/FMa", "4thVentricle", "TonsilV", "CBLv", "BSv"]
-feature_names = ["ratio", "ventricle", "TonsilV"]
+feature_names = ["TonsilL", "(CMa+Ta)/FMa", "4thVentricle"]
 for feature_name in feature_names:
     df[feature_name] = df[feature_name] / df[feature_name].std()
     
@@ -38,8 +38,8 @@ X = df[feature_names].values
 ## label symptoms
 # Chiari = df.loc[df["condition"]=="Chiari", "condition"]=0
 # Healthy = df.loc[df["condition"]=="Healthy", "condition"]=1
-# label = df["SevereSymptom"]
-label = df["condition"]
+label = df["SevereSymptom"]
+# label = df["condition"]
 from sklearn.preprocessing import LabelEncoder 
 ly = LabelEncoder()
 y = ly.fit_transform(label)
@@ -57,7 +57,7 @@ y = ly.fit_transform(label)
 
 ## Logistic Regression using Sklearn
 from sklearn.linear_model import LogisticRegression
-logreg = LogisticRegression(solver = 'lbfgs',multi_class='ovr', max_iter=100, C=1)
+logreg = LogisticRegression(solver = 'newton-cg',multi_class='auto', max_iter=100, C=1)
 logreg.fit(X,y)
 
 # logreg.fit(x_train,y_train)

@@ -42,7 +42,7 @@ Yes = df.loc[df["syringomyelia"]=="Y", "syringomyelia"]=1
 # label = df["syringomyelia"]
 
 
-dtf = df[["syringomyelia","TonsilV","CBLv","4thV"]].reset_index(drop=True)
+dtf = df[["syringomyelia","(CMa+Ta)/FMa","TonsilV", "4thV"]].reset_index(drop=True)
 dtf = dtf.reset_index().rename(columns={"index":"id"})
 dtf.head()
 label = dtf["syringomyelia"]
@@ -50,9 +50,9 @@ label = dtf["syringomyelia"]
 ## K-mean clustering
 k = 1
 model = cluster.KMeans(n_clusters=k, init='k-means++')
-Syrinx = dtf[dtf["syringomyelia"]==1][["TonsilV","CBLv","4thV"]]
+Syrinx = dtf[dtf["syringomyelia"]==1][["(CMa+Ta)/FMa","TonsilV", "4thV"]]
 SyrinxUsed = Syrinx.dropna()
-NoSyrinx = dtf[dtf["syringomyelia"]==0][["TonsilV","CBLv","4thV"]]
+NoSyrinx = dtf[dtf["syringomyelia"]==0][["(CMa+Ta)/FMa","TonsilV", "4thV"]]
 NoSyrinxUsed = NoSyrinx.dropna()
 # SyrinxData = pd.DataFrame(Syrinx["BSv","CBLv","4thV"].values, columns = ["BSv","CBLv","4thV"]);
 
@@ -82,8 +82,8 @@ dtf.sample(1)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection = '3d')
 
-xs = dtf["TonsilV"];
-ys = dtf["CBLv"];
+xs = dtf["(CMa+Ta)/FMa"];
+ys = dtf["TonsilV"];
 zs = dtf["4thV"];
 
 ax.scatter(xs, ys, zs, c = label)
@@ -99,10 +99,10 @@ ax.scatter(NoSyrinxClusters [:,0], NoSyrinxClusters [:,1], NoSyrinxClusters [:,2
 
 ax.set_title("Syringomyelia")
 
-ax.set_xlabel("Tonsil volume (mm^3)")
+ax.set_xlabel("(CMa+Ta)/FMa")
 
-ax.set_ylabel("Cerebellum volume (mm^3)")
+ax.set_ylabel("Tonsil volume (mm^3)")
 
-ax.set_zlabel("4th Ventricle (mm^3)")
+ax.set_zlabel("4th ventricle volume (mm^3)")
 
 plt.show()
