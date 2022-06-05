@@ -16,9 +16,16 @@ from sklearn import linear_model
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.preprocessing import StandardScaler
 
+
+# roc curve and auc
+from sklearn.datasets import make_classification
+from sklearn.metrics import roc_curve
+from sklearn.metrics import roc_auc_score
+
+
 ## Load data
-df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symptoms_morpho.xlsx", sheet_name='SevereSymptom');
-# df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
+# df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symptoms_morpho.xlsx", sheet_name='SevereSymptom');
+df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
 print(df.shape) 
 df.head(2)
 
@@ -28,7 +35,7 @@ df = df.dropna()
 
 ## Normalized Input
 # feature_names = ["TonsilL", "(CMa+Ta)/FMa", "4thVentricle", "TonsilV", "CBLv", "BSv"]
-feature_names = ["TonsilL", "(CMa+Ta)/FMa", "4thVentricle"]
+feature_names = ["TonsilL", "ratio", "ventricle"]
 for feature_name in feature_names:
     df[feature_name] = df[feature_name] / df[feature_name].std()
     
@@ -38,8 +45,8 @@ X = df[feature_names].values
 ## label symptoms
 # Chiari = df.loc[df["condition"]=="Chiari", "condition"]=0
 # Healthy = df.loc[df["condition"]=="Healthy", "condition"]=1
-label = df["SevereSymptom"]
-# label = df["condition"]
+label = df["condition"]
+# label = df["syringomyelia"]
 from sklearn.preprocessing import LabelEncoder 
 ly = LabelEncoder()
 y = ly.fit_transform(label)
@@ -51,21 +58,31 @@ y = ly.fit_transform(label)
 
 
 ## Splitting Data using Sklearn
-# from sklearn.model_selection import train_test_split
-# x_train,x_test,y_train,y_test = train_test_split(X,y,test_size=0.1)
+from sklearn.model_selection import train_test_split
+trainX,testX,trainy,testy = train_test_split(X,y,test_size=0.5, random_state=2)
 
 
 ## Logistic Regression using Sklearn
 from sklearn.linear_model import LogisticRegression
-logreg = LogisticRegression(solver = 'newton-cg',multi_class='auto', max_iter=100, C=1)
-logreg.fit(X,y)
-
-# logreg.fit(x_train,y_train)
+logreg = LogisticRegression(solver = 'lbfgs',multi_class='auto', max_iter=100, C=1)
+logreg.fit(trainX,trainy)
 
 
-score1 = logreg.score(X, y)
-pred1 = logreg.predict_proba(X)
-y_pred1 = logreg.predict(X)
+# generate a no skill prediction (majority class)
+ns_probs = [0 for _ in range(len(testy))]
+
+## Predict probabilities
+lr_probs = logreg.predict_proba(testX)
+# keep probabilities for the positive outcome only
+lr_probs = lr_probs[:, 1]
+score1 = logreg.score(trainX,trainy)
+y_pred1 = logreg.predict(testX)
+
+
+## Predict Probabilities
+# score1 = logreg.score(X, y)
+# pred1 = logreg.predict_proba(X)
+# y_pred1 = logreg.predict(X)
 # conf_m1 = confusion_matrix(X, y)
 # report1 = classification_report(X, y)
 
@@ -85,6 +102,27 @@ equation = "y = %f + (%f * x1) + (%f * x2) + (%f * x3)" % (w0, w1, w2, w3)
  
 # equation = "y = %f + (%f * x1) + (%f * x2) + (%f * x3) + (%f * x4)" % (w0, w1, w2, w3, w4)
 print(equation)
+
+
+# calculate scores
+ns_auc = roc_auc_score(testy, ns_probs)
+lr_auc = roc_auc_score(testy, lr_probs)
+# summarize scores
+print('No Skill: ROC AUC=%.3f' % (ns_auc))
+print('Logistic: ROC AUC=%.3f' % (lr_auc))
+# calculate roc curves
+ns_fpr, ns_tpr, _ = roc_curve(testy, ns_probs)
+lr_fpr, lr_tpr, _ = roc_curve(testy, lr_probs)
+# plot the roc curve for the model
+plt.plot(ns_fpr, ns_tpr, linestyle='--', label='No Skill')
+plt.plot(lr_fpr, lr_tpr, marker='.', label='Logistic')
+# axis labels
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+# show the legend
+plt.legend()
+# show the plot
+plt.show()
 
 
 ## Support Vector Machine using Sklearn
