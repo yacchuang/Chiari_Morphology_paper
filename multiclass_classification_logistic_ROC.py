@@ -43,18 +43,12 @@ X = df[feature_names].values
 
 
 ## label symptoms
-# Chiari = df.loc[df["condition"]=="Chiari", "condition"]=0
-# Healthy = df.loc[df["condition"]=="Healthy", "condition"]=1
 label = df["condition"]
 # label = df["syringomyelia"]
 from sklearn.preprocessing import LabelEncoder 
 ly = LabelEncoder()
 y = ly.fit_transform(label)
 
-
-## pairplot
-# sns.set()
-# sns.pairplot(df[['TonsilV', 'CBLv', 'BSv', '4thV', 'TonsilL', 'FMaRatio']], hue="condition", diag_kind="kde")
 
 
 ## Splitting Data using Sklearn
@@ -79,18 +73,6 @@ score1 = logreg.score(trainX,trainy)
 y_pred1 = logreg.predict(testX)
 
 
-## Predict Probabilities
-# score1 = logreg.score(X, y)
-# pred1 = logreg.predict_proba(X)
-# y_pred1 = logreg.predict(X)
-# conf_m1 = confusion_matrix(X, y)
-# report1 = classification_report(X, y)
-
-# acc1 = accuracy_score(y_test,y_pred)
-# p_pred1 = logreg.predict_proba(x_test)
-# y_pred1 = logreg.predict(x_test)
-# conf_m1 = confusion_matrix(y_test, y_pred)
-# report1 = classification_report(y_test, y_pred)
 
 ## Logistic Regression Prediction
 w0 = logreg.intercept_[0]
@@ -124,22 +106,4 @@ plt.legend()
 # show the plot
 plt.show()
 
-
-## Support Vector Machine using Sklearn
-# from sklearn.svm import SVC
-# svc1 = SVC(C=1,kernel='rbf',gamma=1)     
-# svc1.fit(x_train,y_train)
-# y_pred4 = svc1.predict(x_test)
-
-# acc4= accuracy_score(y_test,y_pred4)
-# # p_pred4 = svc1.predict_proba(x_test)
-# y_pred4 = svc1.predict(x_test)
-# conf_m4 = confusion_matrix(y_test, y_pred4)
-# report4 = classification_report(y_test, y_pred4)
-
-# # Scatter plot
-# plt.scatter(x, y1, color = "r")
-# plt.scatter(x, y2, color = "b")
-# plt.scatter(x, y3, color = "g")
-# plt.plot(X,lm.predict_proba(X)[:,1], color='red')
 
