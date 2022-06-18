@@ -35,7 +35,7 @@ df = df.dropna()
 
 ## Normalized Input
 # feature_names = ["TonsilL", "ratio", "ventricle", "TonsilV", "CBLv", "BSv", "Boogard", "Occipital"]
-feature_names = ["BS V", "CBL V"]
+feature_names = ["(CMa+Ta)/FMa", "4th V", "CBL V"]
 for feature_name in feature_names:
     df[feature_name] = df[feature_name] / df[feature_name].std()
     
@@ -71,9 +71,9 @@ y_pred1 = logreg.predict(X)
 
 ## Logistic Regression Prediction
 w0 = logreg.intercept_[0]
-w = w1, w2 = logreg.coef_[0]
+w = w1, w2, w3 = logreg.coef_[0]
  
-equation = "y = %f + (%f * x1) + (%f * x2) " % (w0, w1, w2)
+equation = "y = %f + (%f * x1) + (%f * x2) + (%f * x3)" % (w0, w1, w2, w3)
 
 # w = w1, w2, w3, w4 = logreg.coef_[0]
  
