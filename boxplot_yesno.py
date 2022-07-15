@@ -10,42 +10,64 @@ import seaborn as sns
 from scipy import stats
 import numpy as np
 from scipy.stats import mannwhitneyu, normaltest
+import xlsxwriter
 from xlwt import Workbook
 
 
 
 
-df = pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symptoms_correlation_YN.xlsx", sheet_name='symptoms_new3D', index_col = None);
+df = pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symptoms_morpho.xlsx", sheet_name='surgery', header = None, index_col = None);
 
+
+df.loc[df[0]=="N", 0]=0
+df.loc[df[0]=="Y", 0]=1
 ### Create new worksheet
-wb = Workbook()
+wb = xlsxwriter.Workbook()
 
 # add_sheet is used to create sheet.
-sheet1 = wb.add_sheet('CBLv')
+sheet1 = wb.add_worksheet('TonsilV')
 
 # BackpainYes = df.loc[(df.back_neck_ear_pain == "Y"), "CBLv"].values
 # BackpainNo = df.loc[(df.back_neck_ear_pain == "N"), "CBLv"].values
 
-SensoryYes = df.loc[(df.sensory_changes == "Y"), "CBLv"].values
-SensoryNo = df.loc[(df.sensory_changes == "N"), "CBLv"].values
+TonsilVYes = df.loc[(df[0] == 1), 2].values
+TonsilVNo = df.loc[(df[0] == 0), 2].values
+
+'''
+row = 0
+col = 0
+for TonsilVYes, TonsilVNo in TonsilVYes, TonsilVNo:
+    sheet1.write(row, col, TonsilVYes)
+    sheet1.write(row, col+1, TonsilVNo)
+    row += 1
+'''
 
 # yes = df.loc[(df.nausea_vomit == "Y"), "CBLv"].values
 # no = df.loc[(df.nausea_vomit == "N"), "CBLv"].values
 
-GaitYes = df.loc[(df.gait_imbalance == "Y"), "CBLv"].values
-GaitNo = df.loc[(df.gait_imbalance == "N"), "CBLv"].values
+CBLvYes = df.loc[(df[0] == 1), 3].values
+CBLvNo = df.loc[(df[0] == 0), 3].values
 
-NumbnessYes = df.loc[(df.numbness == "Y"), "CBLv"].values
-NumbnessNo = df.loc[(df.numbness == "N"), "CBLv"].values
+BSvYes = df.loc[(df[0] == 1), 4].values
+BSvNo = df.loc[(df[0] == 0), 4].values
 
 # DizzinessYes = df.loc[(df.dizziness == "Y"), "CBLv"].values
 # DizzinessNo = df.loc[(df.dizziness == "N"), "CBLv"].values
 
-WeaknessYes = df.loc[(df.weakness == "Y"), "CBLv"].values
-WeaknessNo = df.loc[(df.weakness == "N"), "CBLv"].values
+ventricleYes = df.loc[(df[0] == 1), 5].values
+ventricleNo = df.loc[(df[0] == 0), 5].values
 
-SpasmYes = df.loc[(df.spasm_hyperreflecxic_jerking_movement == "Y"), "CBLv"].values
-SpasmNo = df.loc[(df.spasm_hyperreflecxic_jerking_movement == "N"), "CBLv"].values
+TLYes = df.loc[(df[0] == 1), 7].values
+TLNo = df.loc[(df[0] == 0), 7].values
+
+FMaYes = df.loc[(df[0] == 1), 8].values
+FMaNo = df.loc[(df[0] == 0), 8].values
+
+OccipitalYes = df.loc[(df[0] == 1), 12].values
+OccipitlNo = df.loc[(df[0] == 0), 12].values
+
+# SpasmYes = df.loc[(df.Surgery == "Y"), "CBLv"].values
+# SpasmNo = df.loc[(df.Surgery == "N"), "CBLv"].values
 
 # yes = df.loc[(df.tinnitus_vertigo == "Y"), "CBLv"].values
 # no = df.loc[(df.tinnitus_vertigo == "N"), "CBLv"].values
@@ -57,8 +79,8 @@ SpasmNo = df.loc[(df.spasm_hyperreflecxic_jerking_movement == "N"), "CBLv"].valu
 # no = df.loc[(df.urinary_bowel == "N"), "CBLv"].values
 
 # write the data in a new excel sheet 
-sheet1.write("SensoryYes", "SensoryNo")
-wb.save('/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/severe_CBLv.xls')
+sheet1.write(TonsilVYes, TonsilVNo)
+wb.save('/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/surgery_volume.xls')
 
 ## statistics
 log_yes = np.log(yes)
@@ -70,7 +92,7 @@ print("Yes vs No: \n", stat_results, "\n")
 
 
 # boxplot
-boxplot = sns.boxplot(x="headache", y="CBLv", data=df);
+boxplot = sns.boxplot(x="Surgery", y="CBLv", data=df);
 # boxplot = sns.boxplot(x="condition", y="4thVentricle", data=pd.melt(df), order=["Y", "N"])
 # boxplot = sns.stripplot(x="condition", y="4thVentricle", data=pd.melt(df), marker="o", alpha=0.3, color="black", order=["Y", "N"])
 boxplot.axes.set_title("headache vs CBLv", fontsize=16)

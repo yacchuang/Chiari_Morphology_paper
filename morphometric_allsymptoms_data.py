@@ -16,7 +16,7 @@ from xlwt import Workbook
 
 
 ### load data
-df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari Morphometric/results/symptoms_morph/symptoms_correlation.xlsx", sheet_name='symptoms_new', header = None, index_col = None);
+df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symptoms_correlation.xlsx", sheet_name='symptoms_new2', header = None, index_col = None);
 print(df.shape) 
 print("Column headings:")
 print(df.columns)
@@ -25,10 +25,10 @@ print(df.columns)
 wb = Workbook()
 
 # add_sheet is used to create sheet.
-sheet1 = wb.add_sheet('FMaRatio')
+sheet1 = wb.add_sheet('surgery')
 
 col = 0
-for symptoms in range(2,17):
+for symptoms in range(2,19):
     sheet1.write(0, col, df.loc[0, symptoms])
     col = col + 1
 
