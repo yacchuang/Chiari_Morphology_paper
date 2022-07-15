@@ -33,14 +33,6 @@ sheet1 = wb.add_worksheet('TonsilV')
 TonsilVYes = df.loc[(df[0] == 1), 2].values
 TonsilVNo = df.loc[(df[0] == 0), 2].values
 
-'''
-row = 0
-col = 0
-for TonsilVYes, TonsilVNo in TonsilVYes, TonsilVNo:
-    sheet1.write(row, col, TonsilVYes)
-    sheet1.write(row, col+1, TonsilVNo)
-    row += 1
-'''
 
 # yes = df.loc[(df.nausea_vomit == "Y"), "CBLv"].values
 # no = df.loc[(df.nausea_vomit == "N"), "CBLv"].values

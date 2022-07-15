@@ -25,7 +25,8 @@ from sklearn.metrics import roc_auc_score
 
 ## Load data
 # df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/ChiariSymptoms_analysis.xlsx", sheet_name='syringomyelia');
-df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
+# df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
+df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symptoms_morpho.xlsx", sheet_name='surgery');
 print(df.shape) 
 df.head(2)
 
@@ -34,8 +35,8 @@ df = df.dropna()
 
 
 ## Normalized Input
-# feature_names = ["TonsilL", "ratio", "ventricle", "TonsilV", "CBLv", "BSv", "Boogard", "Occipital"]
-feature_names = ["TonsilV", "CBLv"]
+# feature_names = ["(CMa+Ta)/FMa", "4thVentricle", "TonsilV", "CBLv", "BSv", "Occipital"]
+feature_names = ["BSv", "Occipital"]
 for feature_name in feature_names:
     df[feature_name] = df[feature_name] / df[feature_name].std()
     
@@ -43,7 +44,7 @@ X = df[feature_names].values
 
 
 ## label symptoms
-label = df["condition"]
+label = df["Surgery"]
 # label = df["syringomyelia"]
 from sklearn.preprocessing import LabelEncoder 
 ly = LabelEncoder()
@@ -53,12 +54,12 @@ y = ly.fit_transform(label)
 
 ## Splitting Data using Sklearn
 from sklearn.model_selection import train_test_split
-trainX,testX,trainy,testy = train_test_split(X,y,test_size=0.5, random_state=2)
+trainX,testX,trainy,testy = train_test_split(X,y,test_size=0.3, random_state=2)
 
 
 ## Logistic Regression using Sklearn
 from sklearn.linear_model import LogisticRegression
-logreg = LogisticRegression(solver = 'lbfgs',multi_class='auto', max_iter=100, C=1)
+logreg = LogisticRegression(solver = 'lbfgs',multi_class='ovr', max_iter=100, C=1)
 logreg.fit(trainX,trainy)
 
 

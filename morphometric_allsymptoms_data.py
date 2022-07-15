@@ -46,7 +46,7 @@ for column in df[2:17]:
 
 row = 0
 col = 0
-for column in range(2,17):
+for column in range(2,19):
     for i in df.loc[:, column]:
         if i == 1:
             sheet1.write(row, col, df.iloc[row, 25])
