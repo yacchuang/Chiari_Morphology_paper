@@ -30,21 +30,25 @@ df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms
 print(df.shape) 
 df.head(2)
 
-df = df.dropna()
+# df = df.dropna()
 # X = df.iloc[:,3:6].values
 
 
 ## Normalized Input
 # feature_names = ["(CMa+Ta)/FMa", "4thVentricle", "TonsilV", "CBLv", "BSv", "Occipital"]
-feature_names = ["BSv", "Occipital"]
+feature_names = ["(CMa+Ta)/FMa", "TonsilV"]
+variables = ["Surgery", "(CMa+Ta)/FMa", "TonsilV"]
+df_feature = df[variables].dropna()
 for feature_name in feature_names:
-    df[feature_name] = df[feature_name] / df[feature_name].std()
+    df_feature[feature_name] = df_feature[feature_name] / df_feature[feature_name].std()
+    # df[feature_name] = df[feature_name] / df[feature_name].std()
     
-X = df[feature_names].values
+X = df_feature[feature_names]
+# X = df[feature_names].values
 
 
 ## label symptoms
-label = df["Surgery"]
+label = df_feature["Surgery"]
 # label = df["syringomyelia"]
 from sklearn.preprocessing import LabelEncoder 
 ly = LabelEncoder()
