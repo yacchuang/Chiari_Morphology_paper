@@ -24,26 +24,33 @@ from sklearn.metrics import roc_auc_score
 
 
 ## Load data
-df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/ChiariSymptoms_analysis.xlsx", sheet_name='syringomyelia');
+# df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/ChiariSymptoms_analysis.xlsx", sheet_name='syringomyelia');
+df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/symptoms_morph/symptoms_morpho.xlsx", sheet_name='surgery');
 # df =  pd.read_excel("/Users/kurtlab/Desktop/Chiari_Morphometric/results/morphology_results/morphometric_stat_combine.xlsx", sheet_name='2D3D_combine');
 print(df.shape) 
 df.head(2)
 
-df = df.dropna()
-# X = df.iloc[:,3:6].values
+# df = df.dropna()
+
 
 
 ## Normalized Input
-# feature_names = ["TonsilL", "ratio", "ventricle", "TonsilV", "CBLv", "BSv", "Boogard", "Occipital"]
-feature_names = ["(CMa+Ta)/FMa", "4th V", "CBL V"]
+# feature_names = ["TonsilL", "(CMa+Ta)/FMa", "4thV", "TonsilV", "CBLv", "BSv", "Boogard", "Occipital"]
+# feature_names = ["(CMa+Ta)/FMa", "4thVentricle", "TonsilV", "CBLv", "BSv", "Occipital"]
+feature_names = ["BSv", "Occipital"]
+variables = ["Surgery", "BSv", "Occipital"]
+df_feature = df[variables].dropna()
 for feature_name in feature_names:
-    df[feature_name] = df[feature_name] / df[feature_name].std()
+    df_feature[feature_name] = df_feature[feature_name] / df_feature[feature_name].std()
+    # df[feature_name] = df[feature_name] / df[feature_name].std()
     
-X = df[feature_names].values
+X = df_feature[feature_names]
+#X = df[feature_names].values
 
 
 ## label symptoms
-label = df["syringomyelia"]
+# label = df_feature["syringomyelia"]
+label = df_feature["Surgery"]
 # label = df["syringomyelia"]
 from sklearn.preprocessing import LabelEncoder 
 ly = LabelEncoder()
@@ -71,9 +78,9 @@ y_pred1 = logreg.predict(X)
 
 ## Logistic Regression Prediction
 w0 = logreg.intercept_[0]
-w = w1, w2, w3 = logreg.coef_[0]
+w = w1, w2 = logreg.coef_[0]
  
-equation = "y = %f + (%f * x1) + (%f * x2) + (%f * x3)" % (w0, w1, w2, w3)
+equation = "y = %f + (%f * x1) + (%f * x2)" % (w0, w1, w2)
 
 # w = w1, w2, w3, w4 = logreg.coef_[0]
  

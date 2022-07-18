@@ -31,13 +31,13 @@ print(df.shape)
 df.head(2)
 
 # df = df.dropna()
-# X = df.iloc[:,3:6].values
+
 
 
 ## Normalized Input
 # feature_names = ["(CMa+Ta)/FMa", "4thVentricle", "TonsilV", "CBLv", "BSv", "Occipital"]
-feature_names = ["(CMa+Ta)/FMa", "TonsilV"]
-variables = ["Surgery", "(CMa+Ta)/FMa", "TonsilV"]
+feature_names = ["BSv", "Occipital"]
+variables = ["Surgery", "BSv", "Occipital"]
 df_feature = df[variables].dropna()
 for feature_name in feature_names:
     df_feature[feature_name] = df_feature[feature_name] / df_feature[feature_name].std()
@@ -49,7 +49,7 @@ X = df_feature[feature_names]
 
 ## label symptoms
 label = df_feature["Surgery"]
-# label = df["syringomyelia"]
+# label = df["Surgery"]
 from sklearn.preprocessing import LabelEncoder 
 ly = LabelEncoder()
 y = ly.fit_transform(label)
